@@ -1,14 +1,23 @@
 class UsersController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:create, :login]
+    #skip_before_action :verify_authenticity_token, only: [:create, :login]
 
     def create
         #create user account 
-        @user = User.new(user_params)
+        @user = User.new({
+            username: params[:username],
+            email: params[:email],
+            password: params[:password]
+        })
         if @user.save 
             # upon success... render json response 
             render json: @user.to_json 
         else 
-            # upon failure... render json response 
+            # upon failure... render json response
+            if @user.errors
+                render json: @user.errors.full_messages.to_json
+            else
+                render json: "Something happened.".to_json
+            end
         end
     end
 
@@ -27,13 +36,17 @@ class UsersController < ApplicationController
     end
 
     def login
-        @user = User.find_by(username: params[:user][:username])
-        if @user && @user.authenticate(params[:user][:password])
+        @user = User.find_by(email: params[:user][:email])
+        if @user && @user.authenticate(params[:password])
             # upon success... render json response  
             render json: @user.to_json # (include: [:characters, :relationships, :gifts])
         else
-            # upon failure... render json response 
-            # "Invalid username or password. For your security we are not disclosing which is incorrect. You're welcome :)"
+            # upon failure... render json response
+            if @user.errors
+                render json: "Invalid credentials. For your security we cannot disclose which is incorrect. We apologize for the inconvenience.".to_json
+            else
+                render json: "Something happened.".to_json
+            end
         end  
     end
 
