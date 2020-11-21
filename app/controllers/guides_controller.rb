@@ -18,6 +18,11 @@ class GuidesController < ApplicationController
             render json: @guide.to_json 
         else 
             # upon failure... render json response 
+            if @guide.errors
+                render json: @guide.errors.full_messages.to_json
+            else
+                render json: "Something happened.".to_json
+            end
         end
     end
 
