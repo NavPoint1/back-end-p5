@@ -42,11 +42,7 @@ class UsersController < ApplicationController
             render json: @user.to_json # (include: [:characters, :relationships, :gifts])
         else
             # upon failure... render json response
-            if @user.errors
-                render json: "Invalid credentials. For your security we cannot disclose which is incorrect. We apologize for the inconvenience.".to_json
-            else
-                render json: "Something happened.".to_json
-            end
+            render json: "Invalid credentials. For your security we cannot disclose which is incorrect. We apologize for the inconvenience.".to_json
         end  
     end
 
