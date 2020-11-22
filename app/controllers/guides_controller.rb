@@ -6,8 +6,8 @@ class GuidesController < ApplicationController
     end
 
     def show
-        @guide = Guide.find_by(title: params[:guide][:title])
-        render json: @guide.to_json 
+        @guide = Guide.find(params[:id])
+        render json: @guide.to_json(include: [:user])
     end
 
     def create
@@ -15,7 +15,7 @@ class GuidesController < ApplicationController
         @guide = Guide.new(guide_params)
         if @guide.save 
             # upon success... render json response 
-            render json: @guide.to_json 
+            render json: @guide.to_json(include: [:user])
         else 
             # upon failure... render json response 
             if @guide.errors
