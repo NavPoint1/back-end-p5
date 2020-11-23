@@ -11,11 +11,20 @@ class GuidesController < ApplicationController
     end
 
     def create
-        #create user account 
-        @guide = Guide.new(guide_params)
+        @guide = Guide.new({
+            title: params[:title],
+            user_id: params[:user_id],
+        })
         if @guide.save 
+            params[:slides].each { |slide|
+                Slide.create({
+                    guide_id: @guide.id,
+                    header: slide[:header],
+                    content: slide[:content]
+                })
+            }
             # upon success... render json response 
-            render json: @guide.to_json(include: [:user])
+            render json: @guide.to_json(include: [:user, :slides])
         else 
             # upon failure... render json response 
             if @guide.errors
