@@ -1,3 +1,6 @@
+require 'uri'
+require 'open-uri'
+
 class GuidesController < ApplicationController
 
     def index
@@ -7,7 +10,9 @@ class GuidesController < ApplicationController
 
     def show
         @guide = Guide.find(params[:id])
-        render json: @guide.to_json(include: [:user])
+        # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
+        render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
+        # render json: @guide.thumbnail_url
     end
 
     def create
@@ -16,6 +21,16 @@ class GuidesController < ApplicationController
             user_id: params[:user_id],
         })
         if @guide.save 
+            # direct uploads
+            # @guide.thumbnail.attach(params[:thumbnail])
+            # from url
+            file = open(params[:thumbnail])
+            uri = URI.parse(params[:thumbnail])
+            filename = File.basename(uri.path)
+            if file
+                @guide.thumbnail.attach(io: file, filename: filename)
+            end
+            # @guide.thumbnail.attach(io: File.open(params[:thumbnail]), filename: params[:thumbnail].split("/").last)
             params[:slides].each { |slide|
                 Slide.create({
                     guide_id: @guide.id,
@@ -24,7 +39,9 @@ class GuidesController < ApplicationController
                 })
             }
             # upon success... render json response 
-            render json: @guide.to_json(include: [:user, :slides])
+            # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
+            render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
+            # render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
         else 
             # upon failure... render json response 
             if @guide.errors
