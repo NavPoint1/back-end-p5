@@ -35,7 +35,8 @@ class GuidesController < ApplicationController
                 Slide.create({
                     guide_id: @guide.id,
                     header: slide[:header],
-                    content: slide[:content]
+                    content: slide[:content],
+                    media: slide[:media]
                 })
             }
             # upon success... render json response 
