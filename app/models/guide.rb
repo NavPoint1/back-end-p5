@@ -6,6 +6,10 @@ class Guide < ApplicationRecord
 
   has_one_attached :thumbnail
 
+  validates :title, presence: true
+  validates :title, uniqueness: { scope: :user}
+  validates :title, length: { minimum: 4 }
+
   def thumbnail_url
     if self.thumbnail.attached?
       Rails.application.routes.url_helpers.rails_blob_path(self.thumbnail, only_path: true)

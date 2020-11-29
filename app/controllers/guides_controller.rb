@@ -5,7 +5,11 @@ class GuidesController < ApplicationController
 
     def index
         @guides = Guide.all
-        render json: @guides.to_json
+        if @guides.size == 0
+            render json: "404 Not Found".to_json
+        else
+            render json: @guides.to_json(include: [:user, :slides], methods: :thumbnail_url)
+        end
     end
 
     def show
