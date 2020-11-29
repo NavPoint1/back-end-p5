@@ -3,10 +3,12 @@ class Guide < ApplicationRecord
 
   belongs_to :user
   has_many :slides
+  validates_presence_of :slides
 
   has_many :likes
 
   has_one_attached :thumbnail
+  validates :thumbnail, attached: true, content_type: [:png, :jpg, :jpeg, :gif]
 
   validates :title, presence: true
   validates :title, uniqueness: { scope: :user}
