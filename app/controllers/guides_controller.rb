@@ -16,30 +16,30 @@ class GuidesController < ApplicationController
     def show
         @guide = Guide.find(params[:id])
         @guide.update(views: @guide.views + 1)
-        # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
         render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
-        # render json: @guide.thumbnail_url
     end
 
     def create
         if params[:slides].size == 0
             render json: ["Guide must have slides"].to_json
+        elsif params[:thumbnail].size == 0
+            render json: ["Guide must have a thumbnail"].to_json
         else
             @guide = Guide.new({
                 title: params[:title],
                 user_id: params[:user_id],
             })
-            file = open(params[:thumbnail])
-            uri = URI.parse(params[:thumbnail])
-            filename = File.basename(uri.path)
+            begin
+                file = open(params[:thumbnail])
+                uri = URI.parse(params[:thumbnail])
+                filename = File.basename(uri.path)
+            rescue StandardError => e
+                render json: ["Thumbnail failed to parse"].to_json and return
+            end
             if file
                 @guide.thumbnail.attach(io: file, filename: filename)
             end
             if @guide.save 
-                # direct uploads
-                # @guide.thumbnail.attach(params[:thumbnail])
-                # from url
-                # @guide.thumbnail.attach(io: File.open(params[:thumbnail]), filename: params[:thumbnail].split("/").last)
                 params[:slides].each { |slide|
                     Slide.create({
                         guide_id: @guide.id,
@@ -49,9 +49,7 @@ class GuidesController < ApplicationController
                     })
                 }
                 # upon success... render json response 
-                # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
                 render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
-                # render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
             else 
                 # upon failure... render json response 
                 if @guide.errors
