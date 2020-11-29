@@ -1,6 +1,9 @@
 class User < ApplicationRecord
     has_many :guides
     has_many :slides, through: :guides
+
+    has_many :likes
+    has_many :guides, through: :likes
     
     has_one_attached :avatar
     has_secure_password

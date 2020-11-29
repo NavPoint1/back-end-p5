@@ -10,7 +10,7 @@ class UsersController < ApplicationController
         })
         if @user.save 
             # upon success... render json response 
-            render json: @user.to_json 
+            render json: @user.to_json(include: [:likes])
         else 
             # upon failure... render json response
             if @user.errors
@@ -39,7 +39,7 @@ class UsersController < ApplicationController
         @user = User.find_by(email: params[:user][:email])
         if @user && @user.authenticate(params[:password])
             # upon success... render json response  
-            render json: @user.to_json # (include: [:characters, :relationships, :gifts])
+            render json: @user.to_json(include: [:likes])
         else
             # upon failure... render json response
             render json: "Invalid credentials. For your security we cannot disclose which is incorrect. We apologize for the inconvenience.".to_json
@@ -48,6 +48,22 @@ class UsersController < ApplicationController
 
     def logout
 
+    end
+
+    def like
+        @user = User.find(params[:id])
+        guide = Guide.find(params[:guide_id])
+        if @user.guides.include?(guide)
+            # unlike
+            Like.where(user_id: params[:id], guide_id: params[:guide_id]).first.destroy
+        else
+            # like
+            Like.create({
+                user_id: params[:id],
+                guide_id: params[:guide_id]
+            })
+        end
+        render json: guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
     end
 
     private 

@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  resources :slides
+  post "/users/:id/like", to: "users#like", as: "like_toggle"
+  
+  # resources :likes
+  # resources :slides
   resources :guides, except: [:new, :edit]
   resources :users, only: [:create, :update, :destroy]
   

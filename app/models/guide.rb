@@ -4,6 +4,8 @@ class Guide < ApplicationRecord
   belongs_to :user
   has_many :slides
 
+  has_many :likes
+
   has_one_attached :thumbnail
 
   validates :title, presence: true

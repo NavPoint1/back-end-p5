@@ -8,7 +8,8 @@ class GuidesController < ApplicationController
         if @guides.size == 0
             render json: "404 Not Found".to_json
         else
-            render json: @guides.to_json(include: [:user, :slides], methods: :thumbnail_url)
+            # don't include slides here for faster load
+            render json: @guides.to_json(include: [:user, :likes], methods: :thumbnail_url)
         end
     end
 
@@ -16,7 +17,7 @@ class GuidesController < ApplicationController
         @guide = Guide.find(params[:id])
         @guide.update(views: @guide.views + 1)
         # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
-        render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
+        render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
         # render json: @guide.thumbnail_url
     end
 
@@ -46,7 +47,7 @@ class GuidesController < ApplicationController
             }
             # upon success... render json response 
             # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
-            render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
+            render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
             # render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
         else 
             # upon failure... render json response 

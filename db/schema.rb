@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_29_014825) do
+ActiveRecord::Schema.define(version: 2020_11_29_162158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,8 +43,16 @@ ActiveRecord::Schema.define(version: 2020_11_29_014825) do
     t.integer "hidden_score", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "likes", default: 0
     t.index ["user_id"], name: "index_guides_on_user_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "guide_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["guide_id"], name: "index_likes_on_guide_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
   create_table "slides", force: :cascade do |t|
@@ -68,5 +76,7 @@ ActiveRecord::Schema.define(version: 2020_11_29_014825) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "guides", "users"
+  add_foreign_key "likes", "guides"
+  add_foreign_key "likes", "users"
   add_foreign_key "slides", "guides"
 end
