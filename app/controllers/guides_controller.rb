@@ -22,39 +22,43 @@ class GuidesController < ApplicationController
     end
 
     def create
-        @guide = Guide.new({
-            title: params[:title],
-            user_id: params[:user_id],
-        })
-        if @guide.save 
-            # direct uploads
-            # @guide.thumbnail.attach(params[:thumbnail])
-            # from url
+        if params[:slides].size == 0
+            render json: ["Guide must have slides"].to_json
+        else
+            @guide = Guide.new({
+                title: params[:title],
+                user_id: params[:user_id],
+            })
             file = open(params[:thumbnail])
             uri = URI.parse(params[:thumbnail])
             filename = File.basename(uri.path)
             if file
                 @guide.thumbnail.attach(io: file, filename: filename)
             end
-            # @guide.thumbnail.attach(io: File.open(params[:thumbnail]), filename: params[:thumbnail].split("/").last)
-            params[:slides].each { |slide|
-                Slide.create({
-                    guide_id: @guide.id,
-                    header: slide[:header],
-                    content: slide[:content],
-                    media: slide[:media]
-                })
-            }
-            # upon success... render json response 
-            # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
-            render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
-            # render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
-        else 
-            # upon failure... render json response 
-            if @guide.errors
-                render json: @guide.errors.full_messages.to_json
-            else
-                render json: "Something happened.".to_json
+            if @guide.save 
+                # direct uploads
+                # @guide.thumbnail.attach(params[:thumbnail])
+                # from url
+                # @guide.thumbnail.attach(io: File.open(params[:thumbnail]), filename: params[:thumbnail].split("/").last)
+                params[:slides].each { |slide|
+                    Slide.create({
+                        guide_id: @guide.id,
+                        header: slide[:header],
+                        content: slide[:content],
+                        media: slide[:media]
+                    })
+                }
+                # upon success... render json response 
+                # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
+                render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
+                # render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
+            else 
+                # upon failure... render json response 
+                if @guide.errors
+                    render json: @guide.errors.full_messages.to_json
+                else
+                    render json: ["Something happened."].to_json
+                end
             end
         end
     end

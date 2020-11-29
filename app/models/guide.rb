@@ -3,7 +3,7 @@ class Guide < ApplicationRecord
 
   belongs_to :user
   has_many :slides
-  validates_presence_of :slides
+  # validates_presence_of :slides
 
   has_many :likes
 
