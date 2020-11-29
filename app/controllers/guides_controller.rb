@@ -4,7 +4,7 @@ require 'open-uri'
 class GuidesController < ApplicationController
 
     def index
-        @guides = Guide.all
+        @guides = Guide.order('views DESC')
         if @guides.size == 0
             render json: "404 Not Found".to_json
         else
@@ -14,6 +14,7 @@ class GuidesController < ApplicationController
 
     def show
         @guide = Guide.find(params[:id])
+        @guide.update(views: @guide.views + 1)
         # render json: @guide.to_json(include: {thumbnail: {include: {attachments: {include: {blob: {methods: :service_url}}}}}})
         render json: @guide.to_json(include: [:user, :slides], methods: :thumbnail_url)
         # render json: @guide.thumbnail_url
