@@ -114,9 +114,16 @@ class GuidesController < ApplicationController
     end
 
     def destroy
-        @guide = Guide.find_by(title: params[:guide][:title])
-        # delete
-        # render json response
+        @guide = Guide.find(params[:id])
+        # check if exists
+        if @guide.save
+            @guide.slides.destroy_all
+            @guide.likes.destroy_all
+            @guide.destroy
+            render json: "Guide deleted.".to_json
+        else
+            render json: "Guide not found.".to_json
+        end
     end
 
     private 
