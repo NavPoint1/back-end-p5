@@ -120,7 +120,7 @@ class GuidesController < ApplicationController
             @guide.slides.destroy_all
             @guide.likes.destroy_all
             @guide.destroy
-            render json: "Guide deleted.".to_json
+            render json: "success".to_json
         else
             render json: "Guide not found.".to_json
         end
