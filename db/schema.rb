@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_30_043709) do
+ActiveRecord::Schema.define(version: 2020_12_01_204122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,14 @@ ActiveRecord::Schema.define(version: 2020_11_30_043709) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "slide_themes", force: :cascade do |t|
+    t.bigint "slide_id", null: false
+    t.string "theme_belongs_to"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slide_id"], name: "index_slide_themes_on_slide_id"
+  end
+
   create_table "slides", force: :cascade do |t|
     t.bigint "guide_id", null: false
     t.string "header"
@@ -64,6 +72,14 @@ ActiveRecord::Schema.define(version: 2020_11_30_043709) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "layout", default: 0
     t.index ["guide_id"], name: "index_slides_on_guide_id"
+  end
+
+  create_table "themes", force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_themes_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -79,5 +95,7 @@ ActiveRecord::Schema.define(version: 2020_11_30_043709) do
   add_foreign_key "guides", "users"
   add_foreign_key "likes", "guides"
   add_foreign_key "likes", "users"
+  add_foreign_key "slide_themes", "slides"
   add_foreign_key "slides", "guides"
+  add_foreign_key "themes", "users"
 end
