@@ -41,7 +41,7 @@ class GuidesController < ApplicationController
             end
             if @guide.save 
                 params[:slides].each { |slide|
-                    Slide.create({
+                    @guide.slides.create({
                         guide_id: @guide.id,
                         header: slide[:header],
                         content: slide[:content],
@@ -93,8 +93,7 @@ class GuidesController < ApplicationController
                 @guide.slides.destroy_all
                 # rebuild slides
                 params[:slides].each { |slide|
-                    Slide.create({
-                        guide_id: @guide.id,
+                    @guide.slides.create({
                         header: slide[:header],
                         content: slide[:content],
                         media: slide[:media]
