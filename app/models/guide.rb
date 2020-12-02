@@ -5,6 +5,8 @@ class Guide < ApplicationRecord
   has_many :slides
   # validates_presence_of :slides
 
+  belongs_to :theme, optional: true
+
   has_many :likes
 
   has_one_attached :thumbnail

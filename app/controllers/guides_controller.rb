@@ -16,7 +16,7 @@ class GuidesController < ApplicationController
     def show
         @guide = Guide.find(params[:id])
         @guide.update(views: @guide.views + 1)
-        render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
+        render json: @guide.to_json(include: {user: {}, likes: {}, slides: {}, theme: {include: [:user], methods: [:top_border_url, :bottom_border_url, :background_url, :watermark_url]}}, methods: :thumbnail_url)
     end
 
     def create
@@ -39,6 +39,11 @@ class GuidesController < ApplicationController
             if file
                 @guide.thumbnail.attach(io: file, filename: filename)
             end
+            if params[:theme_id]
+                @guide.theme = Theme.find(params[:theme_id])
+            else
+                @guide.theme = nil
+            end
             if @guide.save 
                 params[:slides].each { |slide|
                     @guide.slides.create({
@@ -49,7 +54,7 @@ class GuidesController < ApplicationController
                     })
                 }
                 # upon success... render json response 
-                render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
+                render json: @guide.to_json(include: [:user, :likes, :slides, :theme], methods: :thumbnail_url)
             else 
                 # upon failure... render json response 
                 if @guide.errors
@@ -88,6 +93,11 @@ class GuidesController < ApplicationController
                 title: params[:title],
                 user_id: params[:user_id],
             })
+            if params[:theme_id]
+                @guide.theme = Theme.find(params[:theme_id])
+            else
+                @guide.theme = nil
+            end
             if @guide.save
                 # clear all old slides
                 @guide.slides.destroy_all
@@ -100,7 +110,7 @@ class GuidesController < ApplicationController
                     })
                 }
                 # upon success... render json response 
-                render json: @guide.to_json(include: [:user, :likes, :slides], methods: :thumbnail_url)
+                render json: @guide.to_json(include: [:user, :likes, :slides, :theme], methods: :thumbnail_url)
             else 
                 # upon failure... render json response 
                 if @guide.errors

@@ -3,6 +3,8 @@ class Theme < ApplicationRecord
 
   belongs_to :user, optional: true
 
+  has_many :guides
+
   has_one_attached :top_border
   validates :top_border, attached: true, content_type: [:png, :jpg, :jpeg]
 

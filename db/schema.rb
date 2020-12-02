@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_01_204122) do
+ActiveRecord::Schema.define(version: 2020_12_02_184214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 2020_12_01_204122) do
     t.integer "hidden_score", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "theme_id"
+    t.index ["theme_id"], name: "index_guides_on_theme_id"
     t.index ["user_id"], name: "index_guides_on_user_id"
   end
 
@@ -53,14 +55,6 @@ ActiveRecord::Schema.define(version: 2020_12_01_204122) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["guide_id"], name: "index_likes_on_guide_id"
     t.index ["user_id"], name: "index_likes_on_user_id"
-  end
-
-  create_table "slide_themes", force: :cascade do |t|
-    t.bigint "slide_id", null: false
-    t.string "theme_belongs_to"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["slide_id"], name: "index_slide_themes_on_slide_id"
   end
 
   create_table "slides", force: :cascade do |t|
@@ -92,10 +86,10 @@ ActiveRecord::Schema.define(version: 2020_12_01_204122) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "guides", "themes"
   add_foreign_key "guides", "users"
   add_foreign_key "likes", "guides"
   add_foreign_key "likes", "users"
-  add_foreign_key "slide_themes", "slides"
   add_foreign_key "slides", "guides"
   add_foreign_key "themes", "users"
 end
