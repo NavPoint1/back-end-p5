@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   
   # resources :likes
   # resources :slides
-  resources :themes, only: [:index, :show]
+  resources :themes, only: [:index, :show, :create]
   resources :guides, except: [:new, :edit]
   resources :users, only: [:create, :update, :destroy]
   

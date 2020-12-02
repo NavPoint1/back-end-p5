@@ -55,7 +55,7 @@ class GuidesController < ApplicationController
                 if @guide.errors
                     render json: @guide.errors.full_messages.to_json
                 else
-                    render json: ["Something happened."].to_json
+                    render json: ["Something happened"].to_json
                 end
             end
         end

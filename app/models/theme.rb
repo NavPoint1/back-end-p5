@@ -15,6 +15,10 @@ class Theme < ApplicationRecord
   has_one_attached :watermark
   validates :watermark, attached: true, content_type: [:png, :jpg, :jpeg]
 
+  validates :name, presence: true
+  validates :name, uniqueness: { scope: :user}
+  validates :name, length: { maximum: 15 }
+
   def top_border_url
     rails_blob_path(self.top_border) if self.top_border.attached?
   end
