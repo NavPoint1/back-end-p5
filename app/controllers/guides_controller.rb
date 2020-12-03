@@ -54,7 +54,7 @@ class GuidesController < ApplicationController
                     })
                 }
                 # upon success... render json response 
-                render json: @guide.to_json(include: [:user, :likes, :slides, :theme], methods: :thumbnail_url)
+                render json: @guide.to_json(include: {user: {}, likes: {}, slides: {}, theme: {include: [:user], methods: [:top_border_url, :bottom_border_url, :background_url, :watermark_url]}}, methods: :thumbnail_url)
             else 
                 # upon failure... render json response 
                 if @guide.errors
@@ -110,7 +110,7 @@ class GuidesController < ApplicationController
                     })
                 }
                 # upon success... render json response 
-                render json: @guide.to_json(include: [:user, :likes, :slides, :theme], methods: :thumbnail_url)
+                render json: @guide.to_json(include: {user: {}, likes: {}, slides: {}, theme: {include: [:user], methods: [:top_border_url, :bottom_border_url, :background_url, :watermark_url]}}, methods: :thumbnail_url)
             else 
                 # upon failure... render json response 
                 if @guide.errors
